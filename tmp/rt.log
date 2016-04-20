@@ -1,0 +1,21 @@
+﻿Build started 2016-04-19 23:17:18.
+     1>Project "C:\Users\Artur\Documents\Visual Studio 2015\Projects\rt\rt.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I"C:\Users\Artur\Documents\Visual Studio 2015\Projects\rt\3rd\glm\glm" /I"C:\Users\Artur\Documents\Visual Studio 2015\Projects\rt\3rd\FreeImage\x32" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"tmp\\" /Fd"tmp\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt src\source.cpp
+         source.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"bin\rt.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Users\Artur\Documents\Visual Studio 2015\Projects\rt\3rd\glm\glm" /LIBPATH:"C:\Users\Artur\Documents\Visual Studio 2015\Projects\rt\3rd\FreeImage\x32" FreeImage.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"bin\rt.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"bin\rt.lib" /MACHINE:X86 tmp\CCamera.obj
+         tmp\CImage.obj
+         tmp\CLight.obj
+         tmp\CObject.obj
+         tmp\COutput.obj
+         tmp\CRay.obj
+         tmp\CRayTrace.obj
+         tmp\CScene.obj
+         tmp\source.obj
+         rt.vcxproj -> C:\Users\Artur\Documents\Visual Studio 2015\Projects\rt\bin\rt.exe
+     1>Done Building Project "C:\Users\Artur\Documents\Visual Studio 2015\Projects\rt\rt.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.06

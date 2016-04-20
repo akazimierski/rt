@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="headers">
+      <UniqueIdentifier>{b692b17b-0bf0-44ef-b2af-768486aee21e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources">
+      <UniqueIdentifier>{92ef13fb-593f-4dde-8e6e-015cb96fc859}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\CRay.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stdafx.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CCamera.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CObject.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CLight.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CScene.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CRayTrace.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CImage.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\COutput.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\source.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CRay.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CCamera.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CObject.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CLight.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CScene.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CImage.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\COutput.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CRayTrace.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
