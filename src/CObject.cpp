@@ -87,9 +87,9 @@ CTriangle::CTriangle(vec3 pos0, vec3 pos1, vec3 pos2, float reflect, vec3 amb, v
 
 float CTriangle::intersect(CRay* ray) {
 	vec3 N = getNormal();
-	float D = dot(N, pos0);
-	float t = -(dot(N, ray->position) + D) / dot(N, ray->direction);
-	if (t > 0.005f)
+	float D = dot(N, pos1);
+	float t = (dot(N, ray->position) + D) / dot(N, ray->direction);
+	if (t > -0.005f)
 		return t;
 	else
 		return -1;

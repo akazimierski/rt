@@ -10,7 +10,7 @@ public:
 
 	CRayTrace(CScene& scene);
 
-	int rayTrace(CRay &ray, COutput* res);
+	vec3 rayTrace(CRay* ray, vec3 &color, float &energy);
 	int run();
 	
 };

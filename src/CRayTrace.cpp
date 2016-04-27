@@ -7,9 +7,87 @@ CRayTrace::CRayTrace(CScene& scene){
 	
 }
 
-int CRayTrace::rayTrace(CRay &ray, COutput* res) 
+vec3 CRayTrace::rayTrace(CRay* ray, vec3 &color, float &energy) 
 {
-	return 0;
+	float raySize;
+
+	int minIndex = -1;
+	float minRaySize = 0;
+			
+	vector<float> nearest;
+	for (int i = 0; i < scene->obj.size(); i++)
+	{
+		float intersection = scene->obj[i]->intersect(ray);
+		if (intersection > -0.005f && scene->obj[i]->isCrossPoint(intersection, ray))
+		{
+			nearest.push_back(intersection);
+		}
+	}
+	if (nearest.size() > 0)
+	{
+		float intersection = *min_element(begin(nearest), end(nearest));
+		for (int i = 0; i < scene->obj.size(); i++)
+		{
+			if ((raySize = scene->obj[i]->intersect(ray)) != -1 && raySize > 0)
+				if ( raySize == intersection ) minIndex = i;
+				//if (fabs(raySize - intersection) < std::numeric_limits<float>::epsilon()) minIndex = i;
+		}
+		if (minIndex == -1)
+		{
+			return color;
+		}
+		vec3 iAmb = scene->obj[minIndex]->getAmb();
+		color = iAmb;
+		vec3 V;
+		vec3 N;
+		vec3 R;
+		vec3 crossPoint = scene->obj[minIndex]->crossPoint(intersection, ray);
+		for (int j = 0; j < scene->lightCount; j++)
+		{
+			vec3 L = normalize(scene->lights[j]->pos - crossPoint);
+			V = normalize(ray->position - crossPoint);
+			if (scene->obj[minIndex]->type == OBJ_SPHERE)
+			{
+				N = normalize(crossPoint - scene->obj[minIndex]->getPos());
+			}
+			else
+			{
+				N = -scene->obj[minIndex]->getNormal();
+			}
+			R = normalize(reflect(-L, N));
+			//vec3 R = ((2.f*(N*L)* N) - L);
+			//vec3 R = normalize(L - 2.0f * dot(N, L) * N);
+
+			CRay* shadowRay = new CRay(crossPoint, L);
+			vector<float> shadowNearest;
+			for (int i = 0; i < scene->obj.size(); i++)
+			{
+				float intersection = scene->obj[i]->intersect(shadowRay);
+				if (intersection > -0.005f && scene->obj[i]->isCrossPoint(intersection, shadowRay))
+				{
+					shadowNearest.push_back(intersection);
+				}
+			}
+			if (shadowNearest.size() > 0) continue;
+			delete shadowRay;
+
+			vec3 iDiff = (scene->obj[minIndex]->getDiff() * scene->lights[j]->diff)
+				* dot(L, N);
+			vec3 iSpec = scene->obj[minIndex]->getSpec() * scene->lights[j]->spec
+				* pow(dot(V, R), scene->obj[minIndex]->getShin());
+			color += energy*(iDiff + iSpec);
+		}
+		energy *= 0.5f*scene->obj[minIndex]->getRefl();
+		if (energy < 0.2f)
+		{
+			return color;
+		}
+		vec3 v = V;
+		vec3 dir = v - (2.f * v * N) * N;
+		CRay* secRay = new CRay(crossPoint, R);
+		rayTrace(secRay, color, energy);		
+	}
+	return color;
 }
 
 /** Glowna petla ray tracera
@@ -21,80 +99,13 @@ int CRayTrace::run()
 	for (int y = 0; y < scene->cam->height; y++) {
 		for (int x = 0; x < scene->cam->width; x++) {
 			vec3 iTot = vec3(0,0,0);
-
+			float energy = 1.0f;
 			CRay* ray = new CRay(scene->cam->eyePoint, normalize(uvo * vec3(x, y, 1.f)));
-			float raySize;
-
-			int minIndex = -1;
-			float minRaySize = 0;
+			vec3 iSubTot = rayTrace(ray, vec3(0), energy);
 			
-			vector<float> nearest;
-			for (int i = 0; i < scene->obj.size(); i++)
-			{
-				float intersection = scene->obj[i]->intersect(ray);
-				if (intersection > -0.005f && scene->obj[i]->isCrossPoint(intersection, ray))
-				{
-					nearest.push_back(intersection);
-				}
-			}
-			if (nearest.size() > 0)
-			{
-				float intersection = *min_element(begin(nearest), end(nearest));
-				for (int i = 0; i < scene->obj.size(); i++)
-				{
-					if ((raySize = scene->obj[i]->intersect(ray)) != -1 && raySize > 0)
-						if (raySize == intersection) minIndex = i;
-				}
-				//if (scene->obj[minIndex]->isCrossPoint(intersection, ray))
-				//{
-					vec3 iAmb = scene->obj[minIndex]->getAmb();
-					vec3 iSubTot = iAmb;
-					for (int j = 0; j < scene->lightCount; j++)
-					{
-						//vec3 crossPoint = (ray->position+(intersection * ray->direction));
-						vec3 crossPoint = scene->obj[minIndex]->crossPoint(intersection, ray);
-					
-						vec3 L = normalize(scene->lights[j]->pos - crossPoint);
-						vec3 V = normalize(scene->cam->eyePoint - crossPoint);
-						vec3 N;
-						if (scene->obj[minIndex]->type == OBJ_SPHERE)
-						{
-							N = normalize(crossPoint - scene->obj[minIndex]->getPos());
-						}
-						else
-						{
-							N = -scene->obj[minIndex]->getNormal();
-						}
-						vec3 R = normalize(reflect(-L,N));
-						//vec3 R = ((2.f*(N*L)* N) - L);
-						//vec3 R = normalize(L - 2.0f * dot(N, L) * N);
+			iTot += clamp(iSubTot, vec3(0), vec3(1))*255.f;
+			delete ray;
 
-						CRay* shadowRay = new CRay(crossPoint, L);
-						vector<float> shadowNearest;
-						for (int i = 0; i < scene->obj.size(); i++)
-						{
-							float intersection = scene->obj[i]->intersect(shadowRay);
-							if (intersection > -0.005f && scene->obj[i]->isCrossPoint(intersection, shadowRay))
-							{
-								shadowNearest.push_back(intersection);
-							}
-						}
-						if (shadowNearest.size() > 0) continue;
-
-						vec3 iDiff = (scene->obj[minIndex]->getDiff() * scene->lights[j]->diff)
-							* dot(L,N);
-						vec3 iSpec = scene->obj[minIndex]->getSpec() * scene->lights[j]->spec
-							* pow(dot(V, R), scene->obj[minIndex]->getShin());
-
-						iSubTot += iDiff + iSpec;
-						delete shadowRay;
-					}
-					iTot += clamp(iSubTot, vec3(0), vec3(1))*255.f;
-					delete ray;
-				//}
-			}
-
-			//iTot = scene->obj[minIndex]->calculateColor(*scene->lights, scene->lightCount);
 			color.rgbRed = iTot.r;
 			color.rgbGreen = iTot.g;
 			color.rgbBlue = iTot.b;
@@ -104,3 +115,4 @@ int CRayTrace::run()
 	image->save("gradient.bmp");
 	return 0;
 }
+
