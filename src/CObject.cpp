@@ -87,8 +87,8 @@ CTriangle::CTriangle(vec3 pos0, vec3 pos1, vec3 pos2, float reflect, vec3 amb, v
 
 float CTriangle::intersect(CRay* ray) {
 	vec3 N = getNormal();
-	float D = dot(N, pos1);
-	float t = (dot(N, ray->position) + D) / dot(N, ray->direction);
+	float D = dot(N, pos0);
+	float t = (dot(N, ray->position) + D) / -dot(N, ray->direction);
 	if (t > -0.005f)
 		return t;
 	else
@@ -99,11 +99,11 @@ vec3 CTriangle::getNormal() {
 	vec3 A = pos1 - pos0;
 	vec3 B = pos2 - pos0;
 	vec3 C = cross(A, B);
-	return normalize(C);
+	return -normalize(C);
 }
 
 vec3 CTriangle::crossPoint(float t, CRay* ray) {
-	return ray->position + (t * ray->direction);
+	return -(ray->position + (t * ray->direction));
 }
 
 bool CTriangle::isCrossPoint(float t, CRay* ray) {
@@ -115,9 +115,12 @@ bool CTriangle::isCrossPoint(float t, CRay* ray) {
 	vec3 C0 = P - pos0;
 	vec3 C1 = P - pos1;
 	vec3 C2 = P - pos2;
-	if (dot(N, cross(edge0, C0)) > 0 &&
-		dot(N, cross(edge1, C1)) > 0 && 
-		dot(N, cross(edge2, C2)) > 0)
+	float check0 = dot(N, cross(edge0, C0));
+	float check1 = dot(N, cross(edge1, C1));
+	float check2 = dot(N, cross(edge2, C2));
+	if (check0 < 0 &&
+		check1 < 0 && 
+		check2 < 0)
 	{
 		return true;
 	}

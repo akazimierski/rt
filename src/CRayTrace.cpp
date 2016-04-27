@@ -18,20 +18,27 @@ vec3 CRayTrace::rayTrace(CRay* ray, vec3 &color, float &energy)
 	for (int i = 0; i < scene->obj.size(); i++)
 	{
 		float intersection = scene->obj[i]->intersect(ray);
-		if (intersection > -0.005f && scene->obj[i]->isCrossPoint(intersection, ray))
+		bool isIn = scene->obj[i]->isCrossPoint(intersection, ray);
+		if (intersection > -0.005f && isIn)
 		{
 			nearest.push_back(intersection);
+			/*if (scene->obj[i]->type == OBJ_TRIANGLE)
+			{
+				minIndex == i;
+			}*/
 		}
 	}
 	if (nearest.size() > 0)
 	{
 		float intersection = *min_element(begin(nearest), end(nearest));
-		for (int i = 0; i < scene->obj.size(); i++)
-		{
-			if ((raySize = scene->obj[i]->intersect(ray)) != -1 && raySize > 0)
-				if ( raySize == intersection ) minIndex = i;
+		//if (minIndex != -1) {
+			for (int i = 0; i < scene->obj.size(); i++)
+			{
+				if ((raySize = scene->obj[i]->intersect(ray)) != -1 && raySize > 0)
+					if (raySize == intersection) minIndex = i;
 				//if (fabs(raySize - intersection) < std::numeric_limits<float>::epsilon()) minIndex = i;
-		}
+			}
+		//}
 		if (minIndex == -1)
 		{
 			return color;
@@ -52,7 +59,7 @@ vec3 CRayTrace::rayTrace(CRay* ray, vec3 &color, float &energy)
 			}
 			else
 			{
-				N = -scene->obj[minIndex]->getNormal();
+				N = scene->obj[minIndex]->getNormal();
 			}
 			R = normalize(reflect(-L, N));
 			//vec3 R = ((2.f*(N*L)* N) - L);
@@ -65,7 +72,14 @@ vec3 CRayTrace::rayTrace(CRay* ray, vec3 &color, float &energy)
 				float intersection = scene->obj[i]->intersect(shadowRay);
 				if (intersection > -0.005f && scene->obj[i]->isCrossPoint(intersection, shadowRay))
 				{
-					shadowNearest.push_back(intersection);
+					if (scene->obj[i]->type == OBJ_SPHERE)
+					{
+						shadowNearest.push_back(intersection);
+					}
+					else if (scene->obj[i]->type == OBJ_TRIANGLE && minIndex != i)
+					{
+						shadowNearest.push_back(intersection);
+					}
 				}
 			}
 			if (shadowNearest.size() > 0) continue;
@@ -85,7 +99,7 @@ vec3 CRayTrace::rayTrace(CRay* ray, vec3 &color, float &energy)
 		vec3 v = V;
 		vec3 dir = v - (2.f * v * N) * N;
 		CRay* secRay = new CRay(crossPoint, R);
-		rayTrace(secRay, color, energy);		
+		rayTrace(secRay, color, energy);
 	}
 	return color;
 }
