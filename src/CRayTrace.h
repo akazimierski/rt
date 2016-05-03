@@ -11,7 +11,7 @@ public:
 	CRayTrace(CScene& scene);
 
 	vec3 rayTrace(CRay* ray, vec3 &color, float &energy);
-	int run();
+	int run(char* fileName);
 	
 };
 

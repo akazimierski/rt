@@ -22,23 +22,16 @@ vec3 CRayTrace::rayTrace(CRay* ray, vec3 &color, float &energy)
 		if (intersection > -0.005f && isIn)
 		{
 			nearest.push_back(intersection);
-			/*if (scene->obj[i]->type == OBJ_TRIANGLE)
-			{
-				minIndex == i;
-			}*/
 		}
 	}
 	if (nearest.size() > 0)
 	{
 		float intersection = *min_element(begin(nearest), end(nearest));
-		//if (minIndex != -1) {
 			for (int i = 0; i < scene->obj.size(); i++)
 			{
 				if ((raySize = scene->obj[i]->intersect(ray)) != -1 && raySize > 0)
 					if (raySize == intersection) minIndex = i;
-				//if (fabs(raySize - intersection) < std::numeric_limits<float>::epsilon()) minIndex = i;
 			}
-		//}
 		if (minIndex == -1)
 		{
 			return color;
@@ -96,9 +89,8 @@ vec3 CRayTrace::rayTrace(CRay* ray, vec3 &color, float &energy)
 		{
 			return color;
 		}
-		vec3 v = V;
-		vec3 dir = v - (2.f * v * N) * N;
-		CRay* secRay = new CRay(crossPoint, R);
+		vec3 dir = normalize(V + (2.f * V * N) * N);
+		CRay* secRay = new CRay(crossPoint, dir);
 		rayTrace(secRay, color, energy);
 	}
 	return color;
@@ -106,14 +98,16 @@ vec3 CRayTrace::rayTrace(CRay* ray, vec3 &color, float &energy)
 
 /** Glowna petla ray tracera
 */
-int CRayTrace::run() 
+int CRayTrace::run(char* fileName) 
 {
 	mat3 uvo = scene->cam->computeUVO();
 	RGBQUAD color;
 	for (int y = 0; y < scene->cam->height; y++) {
 		for (int x = 0; x < scene->cam->width; x++) {
+
 			vec3 iTot = vec3(0,0,0);
 			float energy = 1.0f;
+
 			CRay* ray = new CRay(scene->cam->eyePoint, normalize(uvo * vec3(x, y, 1.f)));
 			vec3 iSubTot = rayTrace(ray, vec3(0), energy);
 			
@@ -126,7 +120,7 @@ int CRayTrace::run()
 			image->setPixel(x, scene->cam->height - y, color);
 		}
 	}
-	image->save("gradient.bmp");
+	image->save(fileName);
 	return 0;
 }
 
