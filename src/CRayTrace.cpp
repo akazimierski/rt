@@ -37,7 +37,7 @@ vec3 CRayTrace::rayTrace(CRay* ray, vec3 &color, float &energy)
 			return color;
 		}
 		vec3 iAmb = scene->obj[minIndex]->getAmb();
-		color = iAmb;
+		color += iAmb;
 		vec3 V;
 		vec3 N;
 		vec3 R;
@@ -89,7 +89,8 @@ vec3 CRayTrace::rayTrace(CRay* ray, vec3 &color, float &energy)
 		{
 			return color;
 		}
-		vec3 dir = normalize(V + (2.f * V * N) * N);
+		vec3 v = -V;
+		vec3 dir = normalize(v + 2.f * dot(V, N) * N);
 		CRay* secRay = new CRay(crossPoint, dir);
 		rayTrace(secRay, color, energy);
 	}
