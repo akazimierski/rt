@@ -10,6 +10,7 @@
 #include <glm.hpp>
 #include <vector>
 #include <algorithm>
+#include <CL\opencl.h>
 
 using namespace std;
 using namespace glm;

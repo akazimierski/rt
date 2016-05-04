@@ -55,8 +55,6 @@ vec3 CRayTrace::rayTrace(CRay* ray, vec3 &color, float &energy)
 				N = scene->obj[minIndex]->getNormal();
 			}
 			R = normalize(reflect(-L, N));
-			//vec3 R = ((2.f*(N*L)* N) - L);
-			//vec3 R = normalize(L - 2.0f * dot(N, L) * N);
 
 			CRay* shadowRay = new CRay(crossPoint, L);
 			vector<float> shadowNearest;
@@ -77,11 +75,11 @@ vec3 CRayTrace::rayTrace(CRay* ray, vec3 &color, float &energy)
 			}
 			if (shadowNearest.size() > 0) continue;
 			delete shadowRay;
-
+			float test = pow(dot(V, R), scene->obj[minIndex]->getShin());
 			vec3 iDiff = (scene->obj[minIndex]->getDiff() * scene->lights[j]->diff)
 				* dot(L, N);
 			vec3 iSpec = scene->obj[minIndex]->getSpec() * scene->lights[j]->spec
-				* pow(dot(V, R), scene->obj[minIndex]->getShin());
+				* pow(clamp(dot(V, R), 0.f, 1.f), scene->obj[minIndex]->getShin());
 			color += energy*(iDiff + iSpec);
 		}
 		energy *= 0.5f*scene->obj[minIndex]->getRefl();
